@@ -1,6 +1,6 @@
 <template>
   <div id="globalHeader">
-    <a-row class="grid-demo" style="margin-bottom: 16px" align="center">
+    <a-row class="grid-demo" align="center" :wrap="false">
       <a-col flex="auto">
         <a-menu
           mode="horizontal"
@@ -17,7 +17,7 @@
               <div class="title">艾伦OJ判题平台</div>
             </div>
           </a-menu-item>
-          <a-menu-item v-for="item in routes" :key="item.path">
+          <a-menu-item v-for="item in visibleRoutes" :key="item.path">
             {{ item.name }}
           </a-menu-item>
         </a-menu>
@@ -32,8 +32,10 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import checkAccess from "@/access/checkAccess";
+import ACCESS_ENUM from "@/access/accessEnum";
 
 const store = useStore();
 const router = useRouter();
@@ -41,13 +43,29 @@ const router = useRouter();
 // 默认主页
 const selectedKeys = ref(["/"]);
 
-// 设置 三秒后自动更新用户数据
-/*setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "艾伦",
-    role: "admin",
+// 过滤隐藏页面
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    // 根据权限过滤菜单
+    if (
+      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
+    ) {
+      return false;
+    }
+    return true;
   });
-}, 3000);*/
+});
+
+// 设置 三秒后自动更新用户数据
+setTimeout(() => {
+  store.dispatch("user/getLoginUser", {
+    userName: "艾伦管理员",
+    userRole: ACCESS_ENUM.ADMIN,
+  });
+}, 3000);
 
 // 路由跳转后，更新路由
 router.afterEach((to, from, failure) => {
