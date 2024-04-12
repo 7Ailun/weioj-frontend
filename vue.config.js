@@ -11,4 +11,10 @@ module.exports = defineConfig({
       },
     },
   },
+  /*  chainWebpack: (config) => {
+      config.plugin("html").tap((args) => {
+        args[0].title = "艾伦OJ判题平台";
+        return args;
+      });
+    },*/
 });

@@ -6,7 +6,10 @@ import ACCESS_ENUM from "@/access/accessEnum";
  * @param needAccess 需要的权限
  * @return true 表示有权限，false 表示无权限
  */
-const checkAccess = (loginUser: any, needAccess = ACCESS_ENUM.NOT_LOGIN) => {
+const checkAccess = (
+  loginUser: any,
+  needAccess: any = ACCESS_ENUM.NOT_LOGIN
+) => {
   // 获取当前登录用户拥有的权限，如果没有 loginUser，则表示未登录
   const loginUserAccess = loginUser?.userRole ?? ACCESS_ENUM.NOT_LOGIN;
   if (needAccess === ACCESS_ENUM.NOT_LOGIN) {

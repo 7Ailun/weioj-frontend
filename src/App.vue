@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <BasicLayout />
+    <div v-if="route.fullPath.startsWith('/user')">
+      <router-view />
+    </div>
+    <div v-else>
+      <BasicLayout />
+    </div>
   </div>
 </template>
 
@@ -10,13 +15,10 @@
 </style>
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout.vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-import ACCESS_ENUM from "@/access/accessEnum";
+import { useRoute } from "vue-router";
 import { onMounted } from "vue";
 
-const router = useRouter();
-const store = useStore();
+const route = useRoute();
 
 /**
  * 全局初始化函数，有全局单次调用的代码，都可以写在这里
@@ -27,16 +29,5 @@ const doInit = () => {
 
 onMounted(() => {
   doInit();
-});
-
-router.beforeEach((to, from, next) => {
-  // 仅管理员可见，只有管理员才可以访问
-  if (to.meta?.access === ACCESS_ENUM.ADMIN) {
-    if (store.state.user.loginUser?.userRole !== ACCESS_ENUM.ADMIN) {
-      next("/noAuth");
-      return;
-    }
-  }
-  next();
 });
 </script>

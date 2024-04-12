@@ -21,7 +21,6 @@ export default {
           userRole: ACCESS_ENUM.NOT_LOGIN,
         });
       }
-      commit("updateUser", payload); // 提交触发 updateUser函数
     },
   },
   mutations: {

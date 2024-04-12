@@ -35,7 +35,6 @@ import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import ACCESS_ENUM from "@/access/accessEnum";
 
 const store = useStore();
 const router = useRouter();
@@ -60,12 +59,12 @@ const visibleRoutes = computed(() => {
 });
 
 // 设置 三秒后自动更新用户数据
-setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "艾伦管理员",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
-}, 3000);
+// setTimeout(() => {
+//   store.dispatch("user/getLoginUser", {
+//     userName: "艾伦管理员",
+//     userRole: ACCESS_ENUM.ADMIN,
+//   });
+// }, 3000);
 
 // 路由跳转后，更新路由
 router.afterEach((to, from, failure) => {
