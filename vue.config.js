@@ -1,7 +1,11 @@
 const { defineConfig } = require("@vue/cli-service");
 const { resolve } = require("path");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 module.exports = defineConfig({
   transpileDependencies: true,
+  chainWebpack(config) {
+    config.plugin("monaco").use(new MonacoWebpackPlugin());
+  },
   configureWebpack: {
     // 👇🏻 这个配置
     resolve: {
@@ -11,10 +15,4 @@ module.exports = defineConfig({
       },
     },
   },
-  /*  chainWebpack: (config) => {
-      config.plugin("html").tap((args) => {
-        args[0].title = "艾伦OJ判题平台";
-        return args;
-      });
-    },*/
 });
