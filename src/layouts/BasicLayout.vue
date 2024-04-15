@@ -29,7 +29,7 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #basicLayout .content {
-  background: linear-gradient(to right, #eee, #fff);
+  background: linear-gradient(to right, #c9f5f5, #fff);
   margin-bottom: 16px;
   padding: 16px;
 }
