@@ -2,15 +2,6 @@
   <div id="addQuestionView">
     <h2>新增题目</h2>
     <a-form :model="form.answer" label-align="left">
-      <a-form-item field="answer" label="答案">
-        <MarkdownEditor :value="form.answer" :handle-change="onAnswerChange" />
-      </a-form-item>
-      <a-form-item field="content" label="内容">
-        <MarkdownEditor
-          :value="form.content"
-          :handle-change="onContentChange"
-        />
-      </a-form-item>
       <a-form-item field="title" label="题目">
         <a-input
           style="width: 380px"
@@ -24,6 +15,15 @@
           :style="{ width: '380px' }"
           placeholder="请输入题目标签"
           allow-clear
+        />
+      </a-form-item>
+      <a-form-item field="answer" label="答案">
+        <MarkdownEditor :value="form.answer" :handle-change="onAnswerChange" />
+      </a-form-item>
+      <a-form-item field="content" label="内容">
+        <MarkdownEditor
+          :value="form.content"
+          :handle-change="onContentChange"
         />
       </a-form-item>
       <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
@@ -46,7 +46,6 @@
               min="0"
             />
           </a-form-item>
-
           <a-form-item field="timeLimit" label="时间限制">
             <a-input-number
               v-model="form.judgeConfig.timeLimit"
@@ -118,18 +117,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, ref } from "vue";
 import MarkdownEditor from "@/components/MarkdownEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
+import { useRoute } from "vue-router";
 
-const form = reactive({
-  answer: "3",
-  content: "求和",
+const route = useRoute();
+const updatePage = route.path.includes("update");
+
+const form = ref({
+  answer: "",
+  content: "",
   judgeCase: [
     {
-      input: "1 2",
-      output: "3",
+      input: "",
+      output: "",
     },
   ],
   judgeConfig: {
@@ -137,34 +140,88 @@ const form = reactive({
     stackLimit: 1000,
     timeLimit: 1000,
   },
-  tags: ["简单", "数组"],
-  title: "A + B",
-});
+  tags: [],
+  title: "",
+}) as any;
 
-const onSubmit = async () => {
-  console.log(form);
-  const res = await QuestionControllerService.addQuestionUsingPost(form);
+/**
+ * 根据题目 id 获取老的数据
+ */
+const loadData = async () => {
+  const id = route.query.id;
+  if (!id) {
+    return;
+  }
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(
+    id as any
+  );
   if (res.code === 0) {
-    message.success("创建成功");
+    form.value = res.data;
+    if (!form.value.tags) {
+      form.value.tags = [];
+    } else {
+      form.value.tags = JSON.parse(form.value.tags as any);
+    }
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
+    }
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        memoryLimit: 1000,
+        stackLimit: 1000,
+        timeLimit: 1000,
+      };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
+    }
   } else {
-    message.error("创建失败");
+    message.error("获取数据失败," + res.message);
+  }
+};
+onMounted(() => {
+  loadData();
+});
+const onSubmit = async () => {
+  if (updatePage) {
+    const res = await QuestionControllerService.updateQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      message.success("更新成功");
+    } else {
+      message.error("更新失败,");
+    }
+  } else {
+    const res = await QuestionControllerService.addQuestionUsingPost(form);
+    if (res.code === 0) {
+      message.success("创建成功");
+    } else {
+      message.error("创建失败");
+    }
   }
 };
 
 const onAnswerChange = (value: string) => {
-  form.answer = value;
+  form.value.answer = value;
 };
 const onContentChange = (value: string) => {
-  form.content = value;
+  form.value.content = value;
 };
 const handleAdd = () => {
-  form.judgeCase.push({
+  form.value.judgeCase.push({
     input: "",
     output: "",
   });
 };
-const handleDelete = (index: number) => {
-  form.judgeCase.splice(index, 1);
+const handleDelete = (index: string | number) => {
+  form.value.judgeCase.splice(index, 1);
 };
 </script>
 
