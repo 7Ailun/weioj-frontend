@@ -9,6 +9,7 @@
         current: searchParams.current,
         total,
       }"
+      @page-change="onPageChange"
     >
       <template #optional="{ record }">
         <a-space>
@@ -21,20 +22,31 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 
-const show = ref(true);
 const dataList = ref([]);
 const router = useRouter();
 
 const total = ref(0);
 const searchParams = ref({
-  pageSize: 10,
+  pageSize: 5,
   current: 1,
 });
+
+/**
+ * 分页改变
+ */
+const onPageChange = (page: number) => {
+  {
+    searchParams.value = {
+      ...searchParams.value,
+      current: page,
+    };
+  }
+};
 
 /**
  * 数据加载
@@ -51,6 +63,14 @@ const loadData = async () => {
     message.error("数据加载失败.");
   }
 };
+
+/**
+ * 监听数据变化
+ */
+watchEffect(() => {
+  // 当 loadData 中的变量，发生变化时，会重新执行
+  loadData();
+});
 
 /**
  * 更新
@@ -123,10 +143,6 @@ const columns = [
     dataIndex: "acceptedNum",
   },
   {
-    title: "创建用户",
-    dataIndex: "userVO.userName",
-  },
-  {
     title: "创建时间",
     dataIndex: "createTime",
   },
@@ -140,3 +156,5 @@ const columns = [
   },
 ];
 </script>
+
+<style scoped></style>

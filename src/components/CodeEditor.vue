@@ -8,7 +8,7 @@ import * as monaco from "monaco-editor";
 
 const codeEditorRef = ref();
 const codeEditor = ref();
-const value = ref("Hello World");
+const value = ref("");
 const fillValue = () => {
   if (!codeEditor.value) {
     return;
@@ -20,6 +20,7 @@ const fillValue = () => {
  */
 interface Props {
   value: string;
+  language: string;
   handleChange: (v: string) => void;
 }
 
@@ -28,6 +29,7 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  language: "java",
   handleChange: (v: string) => {
     console.log(v);
   },
@@ -36,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 onMounted(() => {
   codeEditor.value = monaco.editor.create(codeEditorRef.value, {
     value: value.value,
-    language: "java",
+    language: props.language,
     automaticLayout: true,
     colorDecorators: true,
     minimap: {

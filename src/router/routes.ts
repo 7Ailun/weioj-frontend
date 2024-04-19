@@ -2,11 +2,12 @@ import { RouteRecordRaw } from "vue-router";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
-import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
-import ExampleView from "@/views/ExampleView.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import ShowQuestionView from "@/views/question/ShowQuestionView.vue";
+import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
+import ACCESS_ENUM from "@/access/accessEnum";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -30,39 +31,42 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/",
+    name: "浏览题目",
+    component: ShowQuestionView,
+  },
+  {
     path: "/add/question",
     name: "新增题目",
     component: AddQuestionView,
+    meta: {
+      access: "user",
+    },
   },
   {
     path: "/manage/question",
     name: "管理题目",
     component: ManageQuestionView,
+    meta: {
+      access: "admin",
+    },
   },
   {
     path: "/update/question",
     name: "更新题目",
     component: AddQuestionView,
-  },
-  {
-    path: "/",
-    name: "浏览题目",
-    component: ExampleView,
-  },
-  {
-    path: "/hide",
-    name: "隐藏页面",
-    component: ExampleView,
     meta: {
       hideInMenu: true,
     },
   },
   {
-    path: "/admin",
-    name: "管理员页面",
-    component: AdminView,
+    path: "/view/question/:id",
+    name: "在线做题",
+    component: ViewQuestionView,
+    props: true,
     meta: {
-      access: "admin",
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
     },
   },
   {
