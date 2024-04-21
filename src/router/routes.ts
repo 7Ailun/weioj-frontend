@@ -8,6 +8,7 @@ import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import ShowQuestionView from "@/views/question/ShowQuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
+import ExampleView from "@/views/ExampleView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {

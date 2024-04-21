@@ -1,9 +1,9 @@
 <template>
   <div id="viewQuestion">
-    <a-tabs default-active-key="1">
-      <a-tab-pane key="1" title="题目描述">
-        <a-row :gutter="[24, 24]">
-          <a-col :md="12" :xs="24">
+    <a-row :gutter="[24, 24]">
+      <a-col :md="12" :xs="24">
+        <a-tabs default-active-key="1">
+          <a-tab-pane key="1" title="题目描述">
             <a-card v-if="question" :title="question.title">
               <a-descriptions title="判题条件">
                 <a-descriptions-item label="时间限制">
@@ -29,8 +29,18 @@
                 </a-space>
               </template>
             </a-card>
-          </a-col>
-          <a-col :md="12" :xs="24">
+          </a-tab-pane>
+          <a-tab-pane key="2" title="评论"> 还没有评论哦</a-tab-pane>
+          <a-tab-pane key="3" title="答案"> 暂时无法查看答案</a-tab-pane>
+        </a-tabs>
+      </a-col>
+      <a-col :md="12" :xs="24">
+        <a-form :model="form" layout="inline">
+          <a-form-item
+            field="language"
+            label="编程语言"
+            style="min-width: 240px"
+          >
             <a-select
               :style="{ width: '200px' }"
               placeholder="选择编程语言"
@@ -41,22 +51,17 @@
               <a-option>go</a-option>
               <a-option>python</a-option>
             </a-select>
-            <CodeEditor
-              style="min-height: 580px; max-height: initial; margin-top: 10px"
-              :value="form.code"
-              :language="form.language"
-              :handle-change="onChange"
-            />
-            <a-divider />
-            <a-button type="primary" @click="onSubmit">提交代码</a-button>
-          </a-col>
-        </a-row>
-      </a-tab-pane>
-      <a-tab-pane key="2" title="评论"> Content of Tab Panel 2</a-tab-pane>
-      <a-tab-pane key="3">
-        <template #title>答案</template>
-      </a-tab-pane>
-    </a-tabs>
+          </a-form-item>
+        </a-form>
+        <CodeEditor
+          :value="form.code"
+          :language="form.language"
+          :handle-change="onCodeChange"
+        ></CodeEditor>
+        <a-divider size="0" />
+        <a-button type="primary" @click="onSubmit">提交代码</a-button>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -64,6 +69,7 @@
 import { onMounted, ref, watchEffect, defineProps } from "vue";
 import {
   QuestionControllerService,
+  QuestionSubmitAddRequest,
   QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
@@ -75,7 +81,7 @@ interface Props {
   id: string;
 }
 
-const form = ref({
+const form = ref<QuestionSubmitAddRequest>({
   code: "",
   language: "java",
 });
@@ -98,7 +104,7 @@ const loadData = async () => {
   }
 };
 
-const onChange = (value: string) => {
+const onCodeChange = (value: string) => {
   form.value.code = value;
 };
 
@@ -135,11 +141,7 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-#viewQuestion
-  .arco-space
-  .arco-space-horizontal
-  .arco-space-align-center
-  .arco-space-item {
+#viewQuestion .arco-space-horizontal .arco-space-item {
   margin-bottom: 0 !important;
 }
 </style>

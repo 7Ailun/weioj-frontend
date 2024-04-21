@@ -16,10 +16,10 @@ const mdValue = ref();
 const codeValue = ref();
 const onMarkdownChange = (v: string) => {
   mdValue.value = v;
-  console.log(v);
+  alert(v);
 };
 const onCodeChange = (v: string) => {
   codeValue.value = v;
-  console.log(v);
+  alert(v);
 };
 </script>
